@@ -24,7 +24,7 @@ impl Version {
         }
         let pre = match pre {
             None => Vec::new(),
-            // "1.2.3-" and "1.2.3-beta." are not valid semver identifiers.
+            // `1.2.3-`、`1.2.3-beta.` 这种预发布段有空段的不是合法版本号
             Some("") => return None,
             Some(pre) => {
                 let parts: Vec<String> = pre.split('.').map(str::to_owned).collect();
@@ -119,7 +119,16 @@ mod tests {
 
     #[test]
     fn rejects_malformed_versions() {
-        for text in ["", "0.1", "0.1.x", "0.1.2.3", "v0.1.3", "0.1.4-", "0.1.4-.", "0.1.4-beta."] {
+        for text in [
+            "",
+            "0.1",
+            "0.1.x",
+            "0.1.2.3",
+            "v0.1.3",
+            "0.1.4-",
+            "0.1.4-.",
+            "0.1.4-beta.",
+        ] {
             assert!(Version::parse(text).is_none(), "{text}");
         }
     }
